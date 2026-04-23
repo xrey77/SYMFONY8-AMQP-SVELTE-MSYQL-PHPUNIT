@@ -1,0 +1,60 @@
+{
+	"name": "svelte.ts",
+	"version": "0.0.1",
+	"description": "Frontend for Symfony 8",
+	"author": "Reynald Marquez-Gragasin",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build && npm run prepack",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"prepack": "svelte-kit sync && svelte-package && publint",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"sideEffects": [
+		"**/*.css"
+	],
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		}
+	},
+	"peerDependencies": {
+		"svelte": "^5.0.0"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^6.1.0",
+		"@sveltejs/adapter-static": "^3.0.10",
+		"@sveltejs/kit": "^2.43.2",
+		"@sveltejs/package": "^2.5.4",
+		"@sveltejs/vite-plugin-svelte": "^6.2.0",
+		"publint": "^0.3.13",
+		"sass-embedded": "^1.99.0",
+		"svelte": "^5.55.4",
+		"svelte-check": "^4.3.2",
+		"typescript": "^5.9.2",
+		"vite": "^7.0.0"
+	},
+	"keywords": [
+		"svelte"
+	],
+	"dependencies": {
+		"@popperjs/core": "^2.11.8",
+		"@types/axios": "^0.9.36",
+		"@types/bootstrap": "^5.2.10",
+		"@types/jquery": "^3.5.33",
+		"axios": "^1.12.2",
+		"bootstrap": "^5.3.8",
+		"jquery": "^3.7.1"
+	}
+}

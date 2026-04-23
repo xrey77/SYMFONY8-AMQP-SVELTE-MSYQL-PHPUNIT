@@ -1,4 +1,5 @@
-<h3>SYMFONY 8.0, PHP 8.4, Advanced Message Queuing Protocol (AMQP) AND PHPUNIT TESTING <br/> SVELTE - TYPESCRIPT and MySQL Database Started Project</h3>
+<h3>SYMFONY 8.0, PHP 8.4, Advanced Message Queuing Protocol (AMQP) and <br/> 
+PHPUNIT TESTING SVELTE-TYPESCRIPT and MySQL Database Started Project</h3>
 <br/>
 <p>Svelte Dependencies:</p>
 <p>1. node 24.13.1</p>

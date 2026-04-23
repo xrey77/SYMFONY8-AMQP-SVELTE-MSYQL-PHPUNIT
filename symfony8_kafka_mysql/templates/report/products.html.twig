@@ -1,0 +1,74 @@
+{# templates/report/products.html.twig #}
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; font-size: 12px; }
+        .category-header { 
+            background-color: #444; 
+            color: white; 
+            padding: 10px; 
+            margin-top: 20px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .logo { width: 140px; }
+    </style>
+</head>
+<body>
+    <img src="{{ logo_base64 }}" class="logo">
+    <h2>Products by Category Report</h2>
+    <p style="font-family: Helvetica;margin-top:-10px;font-size:10px;">
+        As of {{ "now"|date('l, F j, Y') }}
+    </p>
+
+
+    {% for categoryName, categoryProducts in groupedProducts %}
+        <div class="category-header">
+            <strong>{{ categoryName }}</strong>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Descriptions</th>
+                    <th>Stock</th>
+                    <th>Unit</th>
+                    <th>Cost Price</th>
+                    <th>Sell Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in categoryProducts %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.descriptions }}</td>
+                        <td>{{ product.qty }}</td>
+                        <td>{{ product.unit }}</td>
+                        <td>${{ product.costprice|number_format(2) }}</td>
+                        <td>${{ product.sellprice|number_format(2) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <script type="text/php">
+            if (isset($pdf)) {
+                $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
+                $font = $fontMetrics->get_font("helvetica", "bold");
+                $size = 10;
+                $color = array(0,0,0);
+                $x = 250; 
+                $y = $pdf->get_height() - 35;
+                $pdf->page_text($x, $y, $text, $font, $size, $color);
+            }
+        </script>
+
+
+    {% else %}
+        <p>No products found.</p>
+    {% endfor %}
+</body>
+
+</html>

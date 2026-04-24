@@ -1,0 +1,21 @@
+# config/packages/messenger.yaml
+framework:
+    messenger:
+        transports:
+            kafka:
+                dsn: '%env(KAFKA_URL)%'
+                options:
+                    topic:
+                        name: 'user_topic'
+                    flush_timeout_ms: 1000
+                    flush_retries: 5
+                    kafka_conf:
+                        security.protocol: 'sasl_plaintext'
+                        sasl.mechanisms: 'PLAIN'
+                        sasl.username: '%env(KAFKA_SASL_USERNAME)%'
+                        sasl.password: '%env(KAFKA_SASL_PASSWORD)%'
+                        group.id: 'kafka_consumer_group'
+                        enable.auto.offset.store: 'false'
+
+        routing:
+            'App\Message\UserTopicMessage': kafka

@@ -1,0 +1,6 @@
+# config/packages/scheb_two_factor.yaml
+scheb_two_factor:
+    # ... other config
+    totp:
+        enabled: true
+    # ...

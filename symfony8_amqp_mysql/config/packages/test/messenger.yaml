@@ -1,0 +1,6 @@
+# config/packages/test/messenger.yaml
+framework:
+    messenger:
+        transports:
+            async_users: 'test://'
+            async_products: 'test://'

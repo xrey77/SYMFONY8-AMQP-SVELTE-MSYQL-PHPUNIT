@@ -1,12 +1,11 @@
 <script lang="ts">
-  import type { UIEventHandler } from 'svelte/elements';
+  import type { FormEventHandler } from 'svelte/elements';
   import axios from 'axios';
-  import { goto } from '$app/navigation';
 
   export let message: string = '';
   
   const api = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "https://127.0.0.1:8000",
     headers: {'Accept': 'application/json',
               'Content-Type': 'application/json'}
   });
@@ -21,19 +20,19 @@
     data.mobile = "";
     data.usrname = ""
     data.passwrd = "";
-    goto('/', { replaceState: true });
+    window.location.replace('/'); 
     window.setTimeout(() => {
         window.location.reload();
     }, 3000);
   }
 
-  const SubmitRegistration: UIEventHandler<SubmitEvent, HTMLFormElement> = async (event: any) => {
+  const SubmitRegistration: FormEventHandler<HTMLFormElement> = async (event) => {      
     event.preventDefault();
     message = "Please wait....";
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());
     const jsondata = JSON.stringify({firstname: data.firstname, lastname: data.lastname, email: data.email, mobile: data.mobile, username: data.usrname, password: data.passwrd });
-    await api.post("auth/signup", jsondata)
+    await api.post("api/register", jsondata)
         .then((res: any) => {
                 message = res.data.message;                
                 window.setTimeout(() => {

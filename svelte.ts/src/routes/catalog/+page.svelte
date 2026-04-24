@@ -4,7 +4,7 @@ import axios from 'axios';
 import { onMount } from 'svelte';
 
 const api = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://127.0.0.1:8000",
     headers: {'Accept': 'application/json',
             'Content-Type': 'application/json'}
 })
@@ -17,7 +17,7 @@ let prods: any[] = [];
 
 const fetchProducts = (pg: any) => {
     message = "Please wait...";
-    api.get(`/take/products/list/${pg}`)
+    api.get(`/api/productlist/${pg}`)
       .then((res: any) => {        
           prods = res.data.products;
           totpage = res.data.totpage;

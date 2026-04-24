@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { UIEventHandler } from 'svelte/elements';
+  import type { FormEventHandler } from 'svelte/elements';
   import axios from 'axios';
   import { onMount } from 'svelte';
   import jQuery from 'jquery';
@@ -23,7 +23,7 @@
   let cbmfa: any = null;
 
  const api = axios.create({
-   baseURL: "http://localhost:8080",
+   baseURL: "http://127.0.0.1:8000",
    headers: {'Accept': 'application/json',
              'Content-Type': 'application/json'}
  });
@@ -58,10 +58,10 @@ interface Userdata {
             lastname = res.data.lastname;
             email = res.data.email;
             mobile = res.data.mobile; 
-            let userpic: string = `http://localhost:8080/users/${res.data.userpic}`;
+            let userpic: string = `http://127.0.0.1:8000/users/${res.data.userpic}`;
             profilepic = userpic;
             if (res.data.qrcodeurl === null) {
-              qrcodeurl = `http://localhost:8080/images/qrcode.png`;
+              qrcodeurl = `http://127.0.0.1:8000/images/qrcode.png`;
             } else {
               qrcodeurl = res.data.qrcodeurl;
             }
@@ -98,7 +98,7 @@ interface Userdata {
       getUserinfo(userid, token);
   });
 
- const submitProfile: UIEventHandler<SubmitEvent, HTMLFormElement> = (event: any) => {  
+ const submitProfile: FormEventHandler<HTMLFormElement> = (event) => {      
    event.preventDefault();
    const formData = new FormData(event.currentTarget);
    const data = Object.fromEntries(formData.entries());    
@@ -145,7 +145,7 @@ interface Userdata {
        }} )
        .then((res: any) => {
            message = res.data.message;
-           let userpic: string = `http://localhost:8080/users/${res.data.userpic}`;
+           let userpic: string = `http://127.0.0.1:8000/users/${res.data.userpic}`;
            profilepic = userpic;
            sessionStorage.setItem('USERPIC', userpic);
            window.setTimeout(() => {
@@ -201,7 +201,7 @@ interface Userdata {
    }
  }
 
-   const changePassword: UIEventHandler<SubmitEvent, HTMLFormElement> = (event: any) => {  
+const changePassword: FormEventHandler<HTMLFormElement> = (event) => {      
    event.preventDefault();
    const formData = new FormData(event.currentTarget);
    const jdata = Object.fromEntries(formData.entries());    
@@ -302,7 +302,7 @@ interface Userdata {
       }
       window.setTimeout(() => {
          message = '';
-         qrcodeurl = 'http://localhost:8080/images/qrcode.png';
+         qrcodeurl = 'http://127.0.0.1:8000/images/qrcode.png';
        }, 3000);
    });
  }

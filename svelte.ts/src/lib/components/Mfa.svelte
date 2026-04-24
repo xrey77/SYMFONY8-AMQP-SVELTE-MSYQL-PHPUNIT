@@ -1,11 +1,9 @@
 <script lang="ts">
-  import type { UIEventHandler } from 'svelte/elements';
-  // export let form: ActionData;
-  import { onMount } from 'svelte';
+  import type { FormEventHandler } from 'svelte/elements';
   import axios from 'axios'
 
   const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "http://127.0.0.1:8000",
   headers: {'Accept': 'application/json',
             'Content-Type': 'application/json'}
   });
@@ -25,7 +23,7 @@
         message = '';
     }
 
-  const SubmitMfa: SubmitEventHandler<SubmitEvent, HTMLFormElement> = (event: any) => {    event.preventDefault();
+  const SubmitMfa: FormEventHandler<HTMLFormElement> = (event) => {      
     event.preventDefault();
     const uid = sessionStorage.getItem('USERID');
     userid = uid ?? '';
@@ -36,7 +34,7 @@
     const formData = new FormData(event.currentTarget);
     const jdata = Object.fromEntries(formData.entries());    
     const data =JSON.stringify({ otp: jdata.otp });
-        api.patch(`/api/mfa/verifytotp/${userid}`, data, { headers: {
+        api.patch(`/api/otpvalidation/${userid}`, data, { headers: {
         Authorization: `Bearer ${token}`
        }})
         .then((res: any) => {

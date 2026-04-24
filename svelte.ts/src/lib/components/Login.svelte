@@ -1,16 +1,17 @@
 <script lang="ts">
   import Mfa from "./Mfa.svelte";
-  import type { UIEventHandler } from 'svelte/elements';
-  import axios from 'axios';
+  import type { FormEventHandler } from 'svelte/elements';
+  import axios from 'axios'
+
   import jQuery from 'jquery';
-  import { goto } from '$app/navigation';
+  // import { goto } from '$app/navigation';
 
   
   export let message: string = "";
   export let isdisable: boolean = false;
 
   const api = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://127.0.0.1:8000",
     headers: {'Accept': 'application/json',
               'Content-Type': 'application/json'}
   });
@@ -37,27 +38,27 @@ interface User {
     window.location.reload();
   }
 
-  const SubmitLogin: SubmitEventHandler<SubmitEvent, HTMLFormElement> = (event: any) => {  
+  const SubmitLogin: FormEventHandler<HTMLFormElement> = (event) => {      
     event.preventDefault();
     isdisable = true;
     message = "please wait...";
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());    
     const jsondata = JSON.stringify({ username: data.username, password: data.password });
-        api.post<User>("auth/signin", jsondata)
+         api.post<User>("api/login", jsondata)
         .then((res: any) => {
                 message = res.data.message;
+                let userpic: string = `http://127.0.0.1:8000/users/${res.data.userpicture}`;
                 if (res.data.qrcodeurl !== null) {
                     sessionStorage.setItem('USERID',res.data.id);
                     sessionStorage.setItem('TOKEN',res.data.token);
                     sessionStorage.setItem('ROLE',res.data.roles);
-                    let userpic: string = `http://localhost:8080/users/${res.data.userpic}`;
                     sessionStorage.setItem('USERPIC',userpic);
                     message = '';                    
                     jQuery("#loginReset").trigger("click");
                     jQuery("#mfaModal").trigger("click");
-                    goto('/', { replaceState: true });
                     window.setTimeout(() => {
+                      window.location.replace('/'); 
                       window.location.reload();
                     }, 3000);
 
@@ -66,18 +67,18 @@ interface User {
                     sessionStorage.setItem('USERNAME',res.data.username);
                     sessionStorage.setItem('TOKEN',res.data.token);                        
                     sessionStorage.setItem('ROLE',res.data.roles);
-                    let userpic: string = `http://localhost:8080/users/${res.data.userpic}`;
                     sessionStorage.setItem('USERPIC',userpic);                    
                     CloseLogin;
                     message = '';                    
                     isdisable = false;
-                    goto('/', { replaceState: true });
+                    window.location.replace('/'); 
                     window.setTimeout(() => {
                       window.location.reload();
                     }, 3000);
 
                 }
           }, (error: any) => {
+              console.log(error);
                 if (error.response) {
                   message = error.response.data.message;
                 } else {

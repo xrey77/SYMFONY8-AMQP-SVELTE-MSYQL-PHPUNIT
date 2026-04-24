@@ -1,10 +1,10 @@
 <script lang="ts">
 import Footer from '$lib/components/Footer.svelte';
+  import type { FormEventHandler } from 'svelte/elements';
 import axios from 'axios';
-    import { data } from 'jquery';
 
 const api = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://127.0.0.1:8000",
     headers: {'Accept': 'application/json',
             'Content-Type': 'application/json'}
 })
@@ -27,7 +27,7 @@ let prods: any[] = [];
     
   async function searchProducts(page: any, key: any) {
     message = "please wait...searching...";
-    await api.get(`/take/products/search/${page}/${key}`)
+    await api.get(`/api/productsearch/${page}/${key}`)
       .then((res: any) => {
           prods = res.data.products;
           totpage = res.data.totpage;
@@ -56,7 +56,7 @@ let prods: any[] = [];
       });    
   } 
 
-  const submitSearchForm: SubmitEventHandler<SubmitEvent, HTMLFormElement> = (event: any) => {  
+  const submitSearchForm: FormEventHandler<HTMLFormElement> = (event) => {      
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());  

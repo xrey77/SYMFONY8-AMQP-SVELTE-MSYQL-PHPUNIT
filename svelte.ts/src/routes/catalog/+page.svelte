@@ -11,15 +11,17 @@ const api = axios.create({
 
 let page: number = 1;
 let totpage: number = 0;
+let totrecs: number = 0;
 let message: string = '';
 let isfound: boolean = false;
 let prods: any[] = [];
 
-const fetchProducts = (pg: any) => {
+const fetchProducts = async (pg: any) => {
     message = "Please wait...";
-    api.get(`/api/productlist/${pg}`)
+    await api.get(`/api/productlist/${pg}`)
       .then((res: any) => {        
           prods = res.data.products;
+          totrecs = res.data.totrecs;
           totpage = res.data.totpage;
           page = res.data.page;
           isfound = true;
@@ -74,39 +76,38 @@ const lastPage = (event: any) => {
 
 function formatToDecimal(xval: any) {
   const formatter = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2, // Ensures at least two decimal places
-    maximumFractionDigits: 2, // Limits to two decimal places
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
   return formatter.format(xval);
 }
 
 </script>
 
-<div class="container-fluid bg">
+<div class="container-fluid bg mb-1">
     <h3 class="text-white">Products Catalog</h3>
 
     {#if isfound === false}
       <div class="text-left text-danger">{message}</div>
     {/if}
-
-    <div class="card-group mt-4 card-group-center">
-    {#each prods as product}
-        <div class="col-md-4">
-          <div class="card card-height mt-2 mx-1">
-            <img src={`http://localhost:8080/products/${product.productpicture}`} class="card-img-top" alt="..."/>
-            <div class="card-body">
-                <h5 class="card-title">Descriptions</h5>
-                <p class="card-text">{product.descriptions}</p>
+    <div class="container-fluid">
+      <div class="card-group mt-4 card-group-center">
+      {#each prods as product}
+          <div class="col-md-4">
+            <div class="card mt-4 mx-1">
+              <img src={`http://127.0.0.1:8000/products/${product.productpicture}`} class="card-img-top" alt="..."/>
+              <div class="card-body">
+                  <h5 class="card-title text-dark">Descriptions</h5>
+                  <p class="card-text text-dark">{product.descriptions}</p>
+              </div>
+              <div class="card-footer">
+                  <p class="card-text text-danger"><span class="text-dark">PRICE :</span>&nbsp;<strong>&#8369;{formatToDecimal(product.sellprice)}</strong></p>
+              </div>  
             </div>
-            <div class="card-footer">
-                <p class="card-text text-danger"><span class="text-dark">PRICE :</span>&nbsp;<strong>&#8369;{formatToDecimal(product.sellprice)}</strong></p>
-            </div>  
-          </div>
-        </div>          
-    {/each}
-    </div>    
-
-    {#if totpage > 1}
+          </div>          
+      {/each}
+      </div>    
+    </div>
      <nav aria-label="Page navigation example">
         <ul class="pagination mt-2">
           <li class="page-item"><button type="button" onclick={lastPage} class="page-link">Last</button></li>
@@ -116,15 +117,17 @@ function formatToDecimal(xval: any) {
           <li class="page-item page-link text-danger">Page&nbsp;{page} of&nbsp;{totpage}</li>
         </ul>
       </nav><br/>
-    {/if}
-  </div>    
-  <div class="bg text-white">
+</div>    
+<div class="bg text-white">
     <Footer/>
 </div>
-
+ 
 <style lang="scss">
   .bg {    
     background-color: gray !important;
     background-size: cover !important;
+  }
+  .pagination {
+    margin-left: 15px;
   }
 </style>

@@ -1,14 +1,25 @@
 <script lang="ts">
   import Mfa from "./Mfa.svelte";
+  // import { Modal } from 'bootstrap'; 
   import type { FormEventHandler } from 'svelte/elements';
   import axios from 'axios'
-
-  import jQuery from 'jquery';
   // import { goto } from '$app/navigation';
+  import jQuery from 'jquery';
+  import { onMount } from "svelte";
 
-  
-  export let message: string = "";
-  export let isdisable: boolean = false;
+
+  import { browser } from '$app/environment';
+
+  // Instead of direct document calls, wrap logic:
+  if (browser) {
+      const modalElem = document.getElementById('staticMfa');
+  }
+
+
+  // import { goto } from '$app/navigation';
+  let message = $state('');
+  let isdisable = $state(false);
+  let bootstrap: any;
 
   const api = axios.create({
     baseURL: "http://127.0.0.1:8000",
@@ -38,6 +49,13 @@ interface User {
     window.location.reload();
   }
 
+  let modalInstance: any = null; 
+
+  onMount(async () => {
+    bootstrap = await import('bootstrap');
+  });
+
+
   const SubmitLogin: FormEventHandler<HTMLFormElement> = (event) => {      
     event.preventDefault();
     isdisable = true;
@@ -46,36 +64,33 @@ interface User {
     const data = Object.fromEntries(formData.entries());    
     const jsondata = JSON.stringify({ username: data.username, password: data.password });
          api.post<User>("api/login", jsondata)
-        .then((res: any) => {
+        .then(async (res: any) => {
                 message = res.data.message;
                 let userpic: string = `http://127.0.0.1:8000/users/${res.data.userpicture}`;
                 if (res.data.qrcodeurl !== null) {
-                    sessionStorage.setItem('USERID',res.data.id);
-                    sessionStorage.setItem('TOKEN',res.data.token);
-                    sessionStorage.setItem('ROLE',res.data.roles);
-                    sessionStorage.setItem('USERPIC',userpic);
+                    window.sessionStorage.setItem('USERID',res.data.id);
+                    window.sessionStorage.setItem('TOKEN',res.data.token);
+                    window.sessionStorage.setItem('ROLE',res.data.roles);
+                    window.sessionStorage.setItem('USERPIC',userpic);
                     message = '';                    
                     jQuery("#loginReset").trigger("click");
                     jQuery("#mfaModal").trigger("click");
-                    window.setTimeout(() => {
-                      window.location.replace('/'); 
-                      window.location.reload();
-                    }, 3000);
-
+                    const modalElem = document.getElementById('staticMfa');
+                    if (modalElem && bootstrap) {
+                        modalInstance = new bootstrap.Modal(modalElem); 
+                        modalInstance.show();
+                    }
                 } else {
-                    sessionStorage.setItem('USERID',res.data.id);
-                    sessionStorage.setItem('USERNAME',res.data.username);
-                    sessionStorage.setItem('TOKEN',res.data.token);                        
-                    sessionStorage.setItem('ROLE',res.data.roles);
-                    sessionStorage.setItem('USERPIC',userpic);                    
-                    CloseLogin;
+                    window.sessionStorage.setItem('USERID',res.data.id);
+                    window.sessionStorage.setItem('USERNAME',res.data.username);
+                    window.sessionStorage.setItem('TOKEN',res.data.token);                        
+                    window.sessionStorage.setItem('ROLE',res.data.roles);
+                    window.sessionStorage.setItem('USERPIC',userpic);                    
                     message = '';                    
                     isdisable = false;
-                    window.location.replace('/'); 
-                    window.setTimeout(() => {
-                      window.location.reload();
-                    }, 3000);
-
+                    jQuery("#loginReset").trigger("click");
+                    jQuery("#closeModal").trigger("click");
+                    window.location.reload();                    
                 }
           }, (error: any) => {
               console.log(error);
@@ -99,7 +114,8 @@ interface User {
     <div class="modal-content">
       <div class="modal-header bg-danger">
         <h1 class="modal-title fs-5 text-white" id="staticLoginLabel">User Login</h1>
-        <button on:click={CloseLogin} id="closeLogin" type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button on:click={CloseLogin} type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button id="closeModal" type="button" class="btn-close d-none" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form on:submit={SubmitLogin} autocomplete="off">
@@ -115,7 +131,6 @@ interface User {
         </form>
       </div>
       <div class="modal-footer">
-
         <div class="w-100 text-center text-danger">{message as string}</div> 
       </div>
     </div>

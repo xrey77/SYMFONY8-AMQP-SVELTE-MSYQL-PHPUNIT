@@ -1,6 +1,9 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
+		// "paths": {
+		// 	"bootstrap/dist/js/bootstrap.bundle.min.js": ["./node_modules/@types/bootstrap"]
+		// },
 		"allowJs": true,
 		"checkJs": true,
 		"esModuleInterop": true,

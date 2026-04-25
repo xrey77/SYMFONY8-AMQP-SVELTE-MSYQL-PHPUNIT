@@ -5,7 +5,7 @@
   export let message: string = '';
   
   const api = axios.create({
-    baseURL: "https://127.0.0.1:8000",
+    baseURL: "http://127.0.0.1:8000",
     headers: {'Accept': 'application/json',
               'Content-Type': 'application/json'}
   });

@@ -1,21 +1,34 @@
 <script lang="ts">
 import Footer from "$lib/components/Footer.svelte";
 import axios from 'axios'
- import { onMount } from 'svelte';
+import { onMount } from 'svelte';
 
  function formatToDecimal(xval: any) {
     const formatter = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2, // Ensures at least two decimal places
-      maximumFractionDigits: 2, // Limits to two decimal places
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
     return formatter.format(xval);
   }
 
- let page: number = 1;
- let totpage: number = 0;
- let message: string = '';
- let isfound: boolean = false;
- let prods: any[] = [];
+interface Products {
+    id: number;
+    descriptions: string;
+    qty: number;
+    unit: string;
+    sellprice: number;
+}
+
+let page = $state(1);
+let totpage = $state(0);
+let totrecs = $state(0);
+let message = $state('');
+let isfound = $state(false);
+// let prods: any[] = [];
+// let prods = $state<Products>();
+
+
+let prods = $state<Products[]>([]);
 
  const api = axios.create({
     baseURL: "http://127.0.0.1:8000",
@@ -26,10 +39,12 @@ import axios from 'axios'
 const fetchProducts = (pg: any) => {
     isfound = false;
     message = "Please wait...";
-    api.get(`/api/productlist/${pg}`)
+    api.get(`/api/productlist/${pg}`)    
       .then((res: any) => {        
+          // prods = [...res.data]; 
           prods = res.data.products;
           totpage = res.data.totpage;
+          totrecs = res.data.totalrecs;
           page = res.data.page;
           isfound = true;
       }, (error: any) => {
@@ -45,7 +60,10 @@ const fetchProducts = (pg: any) => {
       });
   }
 
-  onMount(() => {
+  // let modalInstance: any = null; 
+
+
+  onMount(async () => {
     fetchProducts(page);
   })
 
@@ -83,10 +101,7 @@ const lastPage = (event: any) => {
 </script>
 
 <div class="container">
-    <h3 class="mt-3 mb-2">Product List</h3>
-    {#if isfound === false}
-      <div class="text-left text-danger">{message}</div>
-    {/if}
+    <h3 class="mt-3 mb-2 text-white">Product List</h3>
     <table class="table table-striped mt-4">
     <thead class="table-primary">
         <tr>
@@ -119,6 +134,10 @@ const lastPage = (event: any) => {
           <li class="page-item page-link text-danger">Page&nbsp;{page} of&nbsp;{totpage}</li>
         </ul>
       </nav>
+      <div class="text-white">TOTAL RECORDS : {totrecs}</div>
+    {#if isfound === false}
+      <div class="text-left text-danger">{message}</div>
+    {/if}
   </div>    
 <div class="fixed-bottom mb-3">
     <Footer/>

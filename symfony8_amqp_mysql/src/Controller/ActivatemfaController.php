@@ -62,7 +62,7 @@ final class ActivatemfaController extends AbstractController
         // 1. Generate Secret using Scheb's Authenticator
         $secret = $this->totpAuthenticator->generateSecret();
         $user->setTotpSecret($secret);
-
+        
         // 2. Generate the QR Content (the URI)
         // Scheb provides a helper to get the QR code content (the otpauth:// URL)
         $qrCodeContent = $this->totpAuthenticator->getQRContent($user);

@@ -66,15 +66,15 @@
     </div>
     <div class="container-fluid mt-3">
     <div class="card">
-      <div class="card-header bg-secondary text-white">
+      <div class="card-header bg-danger text-white">
         <h5>Our mission is to bring inspiration and innovation to every athlete* in the world.</h5>
       </div>
-      <div class="card-body   text-white">
-        <h5 class="card-title">Special Information</h5>
-        <p class="card-text alignjustified">
+      <div class="card-body bg-dark text-white">
+        <h5 class="card-title text-white">Special Information</h5>
+        <p class="card-text alignjustified text-white">
           Nike, is an American athletic footwear and apparel corporation headquartered near Beaverton, Oregon. It is the world's largest supplier of athletic shoes and apparel and a major manufacturer of sports equipment, with revenue in excess of US$46 billion in its fiscal year 2022.
         </p>
-        <p class="card-text alignjustified">
+        <p class="card-text bg-dark alignjustified text-white">
           As of 2024, it employed 83,700 people worldwide. In 2020, the brand alone was valued in excess of $32 billion, making it the most valuable brand among sports businesses. Previously, in 2017, the Nike brand was valued at $29.6 billion. Nike ranked 89th in the 2018 Fortune 500 list of the largest United States corporations by total revenue. The company ranked 239th in the Forbes Global 2000 companies in 2024.
           Bill Bowerman (left) conversing with Phil Knight (second from left) and two other members of the Oregon track team, 1958. <br/><br/>
           Nike, originally known as Blue Ribbon Sports (BRS), was founded by University of Oregon track athlete Phil Knight and his coach, Bill Bowerman, on January 25, 1964. The company initially operated in Eugene, Oregon as a distributor for Japanese shoemaker Onitsuka Tiger, making most sales at track meets out of Knight's automobile.

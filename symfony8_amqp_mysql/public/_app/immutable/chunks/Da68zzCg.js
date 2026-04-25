@@ -1,0 +1,1 @@
+import{a as t,f as e}from"./SvqdruYS.js";import"./Db4K0Yjc.js";var a=e('<div class="w-100 text-center">Copyright &copy 2025-2030, All rights reserve &copysr;</div>');function s(r){var o=a();t(r,o)}export{s as F};

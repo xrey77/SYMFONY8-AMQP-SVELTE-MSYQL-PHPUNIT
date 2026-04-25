@@ -1,19 +1,26 @@
 <script lang="ts">
-
   import 'bootstrap/dist/css/bootstrap.min.css';
-  import scriptSrc from 'bootstrap/dist/js/bootstrap.bundle.min.js?url';  
   import Header from '$lib/components/Header.svelte';
-</script>
 
-<svelte:head>
-  <!-- Load the script directly in the browser's head -->
-  <script src={scriptSrc} defer></script>
-</svelte:head>
+  // for spa purpose
+  export const ssr = true;
+  export const csr = true;
+  export const prerender = false;
+
+  let { children } = $props();
+  let modalElement = $state();
+
+  $effect(() => {
+      import('bootstrap').then((bootstrap) => {
+        const myModal = new bootstrap.Modal(modalElement);
+      });
+    });
+</script>
 
 <Header />
 
 <main>
-  <slot />
+  {@render children()}
 </main>
 
 

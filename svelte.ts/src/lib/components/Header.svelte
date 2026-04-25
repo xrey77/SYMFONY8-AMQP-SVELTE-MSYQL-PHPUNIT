@@ -5,35 +5,21 @@
   import Register from './Register.svelte';
   import { goto } from '$app/navigation';
 
-  let username: string = '';
-  let userpic: string = '';
+  let username = $state('');
+  let userpic = $state('');
 
   onMount(() => {
-    const uname = sessionStorage.getItem('USERNAME');
-    if (uname != undefined) {
-      username = uname;
-    } else {
-      username = '';
-    }
-    const upic = sessionStorage.getItem('USERPIC');
-    if (upic != undefined) {
-      userpic = upic;
-    } else {
-      userpic = '';
-    }
+    username = sessionStorage.getItem('USERNAME') ?? '';
+    userpic =  sessionStorage.getItem('USERPIC') ?? '';        
   });  
 
-  function logout(e: any) {
+async function logout(e: any) {
     e.preventDefault();
-    sessionStorage.removeItem('USERID')
-    sessionStorage.removeItem('USERNAME')
-    sessionStorage.removeItem('TOKEN')
-    sessionStorage.removeItem('USERPIC')
-    goto('/', { replaceState: true });
-    setTimeout(() => {
-      window.location.reload();     
-    }, 3000);
-  }
+    sessionStorage.clear();
+    await goto('/', { replaceState: true });
+    window.location.reload();
+}
+
 
 </script>
 <div>

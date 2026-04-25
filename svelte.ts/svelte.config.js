@@ -4,11 +4,12 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   preprocess: vitePreprocess(),
+  // for spa purpose
   kit: {
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: 'index.html',
+      fallback: '404.html', // Use 404.html for SPA compatibility on many hosts
       precompress: false,
       strict: true
     })

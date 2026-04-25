@@ -4,21 +4,21 @@
   import { onMount } from 'svelte';
   import jQuery from 'jquery';
 
-  let userid: string = '';
-  let firstname: string = '';
-  let lastname: string = '';
-  let email: string = '';
-  let mobile: string = '';
-  let message: string = '';
-  let showSave: boolean =false;
-  let profilepic: string = '';
-  let chgPwd: boolean = false;
-  let chkMfa: boolean = false;
-  let qrcodeurl: string = '';
-  let token: string = '';
+  let userid = $state('');
+  let firstname = $state('');
+  let lastname = $state('');
+  let email = $state('');
+  let mobile = $state('');
+  let message = $state('');
+  let showSave = $state(false);
+  let userpicture = $state('');
+  let chgPwd = $state(false);
+  let chkMfa = $state(false);
+  let qrcodeurl = $state('');
+  let token = $state('');
   let selectedFile: File | null = null;
-  let newpassword: string = '';
-  let confnewpassword: string = '';
+  let newpassword = $state('');
+  let confnewpassword = $state('');
   let cbpwd: any = null;
   let cbmfa: any = null;
 
@@ -28,15 +28,20 @@
              'Content-Type': 'application/json'}
  });
 
+ const mapi = axios.create({
+   baseURL: "http://127.0.0.1:8000",
+ });
+
 interface User {
     id: string,
     firstname: string,
     lastname: string,
     email: string,
     mobile: string,
-    profilepic: string,
+    userpicture: string,
     qrcodeurl: string,
 }
+
 interface Userdata {
   statuscode: string,
   message: string,
@@ -54,20 +59,19 @@ interface Userdata {
    }} )
        .then((res: any) => {
             message = res.data.message;
-            firstname = res.data.firstname;
-            lastname = res.data.lastname;
-            email = res.data.email;
-            mobile = res.data.mobile; 
-            let userpic: string = `http://127.0.0.1:8000/users/${res.data.userpic}`;
-            profilepic = userpic;
-            if (res.data.qrcodeurl === null) {
+            firstname = res.data.user.firstname;
+            lastname = res.data.user.lastname;
+            email = res.data.user.email;
+            mobile = res.data.user.mobile; 
+            userpicture = `http://127.0.0.1:8000/users/${res.data.user.userpic}`;
+            if (res.data.user.qrcodeurl === null) {
               qrcodeurl = `http://127.0.0.1:8000/images/qrcode.png`;
             } else {
-              qrcodeurl = res.data.qrcodeurl;
+              qrcodeurl = res.data.user.qrcodeurl;
             }
             window.setTimeout(() => {
                 message = '';
-              }, 2000);
+              }, 1000);
 
          }, (error: any) => {
              if (error.response) {
@@ -133,26 +137,27 @@ interface Userdata {
      selectedFile = input.files[0];
     const pix = URL.createObjectURL(selectedFile);
       jQuery('#userpic').attr('src', pix);
-
    }
 
    if (selectedFile) {
        let formdata = new FormData();
+       formdata.append('id', userid);
        formdata.append('userpic', selectedFile);
-       api.patch(`/api/uploadpicture/${userid}`, formdata, { headers: {
-       'Content-Type': 'multipart/form-data',
-       Authorization: `Bearer ${token}`
-       }} )
+       mapi.post(`/api/uploadpicture`, formdata, { 
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
        .then((res: any) => {
            message = res.data.message;
-           let userpic: string = `http://127.0.0.1:8000/users/${res.data.userpic}`;
-           profilepic = userpic;
+           let userpic: string = `http://127.0.0.1:8000/users/${res.data.userpicture}`;
+           userpicture = userpic;
            sessionStorage.setItem('USERPIC', userpic);
            window.setTimeout(() => {
              message = '';
              window.location.reload();
            }, 3000);    
-       }, (error: any) => {
+       }, (error) => {
         if (error.response) {
           message = error.response.data.message;
         } else {
@@ -232,9 +237,11 @@ const changePassword: FormEventHandler<HTMLFormElement> = (event) => {
    }
    message = 'Please wait...';
    const data =JSON.stringify({ password: jdata.newpassword });
-   api.patch(`/api/changepassword/${userid}`, data, { headers: {
-   Authorization: `Bearer ${token}`
-   }} )
+   api.patch(`/api/changeuserpassword/${userid}`, data, { 
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
    .then((res: any) => {
          message = res.data.message;
          window.setTimeout(() => {
@@ -258,8 +265,8 @@ const changePassword: FormEventHandler<HTMLFormElement> = (event) => {
 
   async function enableMFA(e: any) {
    e.preventDefault();
-   const data =JSON.stringify({ TwoFactorEnabled: true });
-   await api.patch(`/api/mfa/activate/${userid}`, data, { headers: {
+   const data =JSON.stringify({ Twofactorenabled: true });
+   await api.patch(`/api/activationmfa/${userid}`, data, { headers: {
    'Content-Type': 'application/json',
    Authorization: `Bearer ${token}`
    }} )
@@ -284,8 +291,8 @@ const changePassword: FormEventHandler<HTMLFormElement> = (event) => {
 
  async function disableMFA(e: Event) {
    e.preventDefault();
-   const jdata =JSON.stringify({ TwoFactorEnabled: false });
-   await api.patch(`/api/mfa/activate/${userid}`, jdata, { headers: {
+   const jdata =JSON.stringify({ Twofactorenabled: false });
+   await api.patch(`/api/activationmfa/${userid}`, jdata, { headers: {
        Authorization: `Bearer ${token}`
    }} )
    .then((res: any) => {
@@ -308,8 +315,8 @@ const changePassword: FormEventHandler<HTMLFormElement> = (event) => {
  }
 </script>
 
-<div class="container mt-2">
- <div class="card card-width bs-info-border-subtle">
+<div class="container mt-2 mb-5">
+ <div class="card card-width bs-info-border-subtle mb-4">
      <div class="card-header bg-success text-white">
        <strong>USER'S PROFILE NO.&nbsp; {userid}</strong>
      </div>
@@ -338,7 +345,7 @@ const changePassword: FormEventHandler<HTMLFormElement> = (event) => {
  
                </div>
                <div class="col">
-                   <img id="userpic" class="usr" src={profilepic as string} alt=""/>
+                   <img id="userpic" class="usr" src={userpicture as string} alt=""/>
                    <div class="mb-3">
                        <input type="file" multiple accept="image/*" onchange={changePicture} class="form-control form-control-sm mt-3"/>
                    </div>
@@ -403,6 +410,7 @@ const changePassword: FormEventHandler<HTMLFormElement> = (event) => {
                    {/if}
                </div>
            </div>
+
      </div>
      {#if message != ''}        
       <div class="card-footer">
